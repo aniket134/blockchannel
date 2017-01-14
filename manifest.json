@@ -17,7 +17,6 @@
 	"activeTab",
 	"*://*.youtube.com/*",
 	"*://youtube.com/*",
-	"file:///*/*"          // for testing
     ],
     "background": {
 	"scripts": ["jquery.js", "events.js"],
@@ -28,7 +27,6 @@
 	    "matches": [
 		"*://*.youtube.com/*",
 		"*://youtube.com/*",
-		"file:///*/*"          // for testing
 	    ],
 	    "js"        : ["jquery.js", "content_script.js"],
 	    "run_at"    : "document_end"
