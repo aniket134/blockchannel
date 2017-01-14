@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <script src="popup.js"></script>
+    <style>
+      html {
+      overflow-y: scroll;
+      }
+      body {
+      width: 440px;
+      height: 300px;
+      align: center;
+      overflow-y: scroll;
+      }
+      h1 {
+      font-family: Helvetica, Arial, sans-serif;
+      text-align: center;
+      }
+      table {
+      color: #333;
+      font-family: Helvetica, Arial, sans-serif;
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+      }
+      td, th {
+      border: 1px solid transparent; /* No more visible border */
+      transition: all 0.2s; /* Simple transition for hover effect */
+      }
+      th {
+      background: #DFDFDF; /* Darken header a bit */
+      font-weight: bold;
+      }
+      td {
+      background: #FAFAFA;
+      text-align: center;
+      }
+      tr:nth-child(even) td { background: #F1F1F1; }
+      tr:nth-child(odd) td { background: #FEFEFE; }
+      tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
+
+      button {
+      -moz-box-shadow:inset 0px 1px 0px 0px #9acc85;
+      -webkit-box-shadow:inset 0px 1px 0px 0px #9acc85;
+      box-shadow:inset 0px 1px 0px 0px #9acc85;
+      background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #74ad5a), color-stop(1, #68a54b));
+      background:-moz-linear-gradient(top, #74ad5a 5%, #68a54b 100%);
+      background:-webkit-linear-gradient(top, #74ad5a 5%, #68a54b 100%);
+      background:-o-linear-gradient(top, #74ad5a 5%, #68a54b 100%);
+      background:-ms-linear-gradient(top, #74ad5a 5%, #68a54b 100%);
+      background:linear-gradient(to bottom, #74ad5a 5%, #68a54b 100%);
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#74ad5a', endColorstr='#68a54b',GradientType=0);
+      background-color:#74ad5a;
+      border:1px solid #3b6e22;
+      display:inline-block;
+      cursor:pointer;
+      color:#ffffff;
+      font-family:Arial;
+      font-size:13px;
+      font-weight:bold;
+      padding:6px 12px;
+      text-decoration:none;
+      }
+      button:hover {
+      background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #68a54b), color-stop(1, #74ad5a));
+      background:-moz-linear-gradient(top, #68a54b 5%, #74ad5a 100%);
+      background:-webkit-linear-gradient(top, #68a54b 5%, #74ad5a 100%);
+      background:-o-linear-gradient(top, #68a54b 5%, #74ad5a 100%);
+      background:-ms-linear-gradient(top, #68a54b 5%, #74ad5a 100%);
+      background:linear-gradient(to bottom, #68a54b 5%, #74ad5a 100%);
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#68a54b', endColorstr='#74ad5a',GradientType=0);
+      background-color:#68a54b;
+      }
+      button:active {
+      position:relative;
+      top:1px;
+      }
+      
+    </style>
+  </head>
+  
+  <body>
+    <div id="header"><h1>Block Youtube Channels</h1></div>
+    <div id="nodata"></div>
+    <div id="data">
+      <table id="table"></table>
+    </div>
+  </body>
+</html>
