@@ -77,9 +77,9 @@ function main(){
 	    if(chName.length === 0) return;
 //	    ytl.clog("in addButton: " + chName);
 	    while(document.getElementById("block-channel")) document.getElementById("block-channel").remove();
-	    siblingSpan = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.subscription-preferences-overlay-container");
+	    siblingSpan = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.subscription-preferences-overlay-container") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.yt-subscription-button-disabled-mask");
 	    if(!siblingSpan) return;
-
+	    
 	    wrapperSpan = document.createElement("span");
 	    wrapperSpan.setAttribute("class", "channel-header-subscription-button-container");
 	    button = document.createElement("button");

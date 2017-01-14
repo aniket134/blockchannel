@@ -2,11 +2,11 @@
     "manifest_version": 2,
 
     "name": "Block Youtube Channels",
-    "description": "Blocks videos from certainn Youtube channels.",
+    "description": "Hides videos from blocked Youtube channels.",
     "version": "1.0",
 
     "browser_action": {
-//	"default_icon": "icon.png",
+	"default_icon": "icon32.png",
 	"default_popup": "popup.html"
     },
     "permissions": [
@@ -16,7 +16,7 @@
 	"declarativeContent",
 	"activeTab",
 	"*://*.youtube.com/*",
-	"*://youtube.com/*",
+	"*://youtube.com/*"
     ],
     "background": {
 	"scripts": ["jquery.js", "events.js"],
@@ -26,7 +26,7 @@
 	{
 	    "matches": [
 		"*://*.youtube.com/*",
-		"*://youtube.com/*",
+		"*://youtube.com/*"
 	    ],
 	    "js"        : ["jquery.js", "content_script.js"],
 	    "run_at"    : "document_end"
