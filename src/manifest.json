@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Block Youtube Channels",
-    "description": "Hides videos from blocked Youtube channels.",
+    "description": "Blocks Youtube channels and hides their videos.",
     "version": "1.1",
 
     "browser_action": {
