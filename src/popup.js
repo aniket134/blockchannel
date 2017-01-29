@@ -15,7 +15,7 @@ function populateTable(channels){
 	return;
     }
     if(!tblElem) return;
-    tblElem.innerHTML = "<th>Channel</th><th></th>";
+    tblElem.innerHTML = "<th colspan=2>Blocked Channels</th><th></th>";
     
     for(chName in channels){
 	tr = "<tr>";
