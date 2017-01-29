@@ -1,7 +1,7 @@
 Pg_Type = {
-	NONE: 0,
-	CHANNEL: 1,
-	VIDEO: 2
+    NONE: 0,
+    CHANNEL: 1,
+    VIDEO: 2
 }
 function main(){
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
@@ -22,7 +22,7 @@ function main(){
 		items = items || {}; items.channels = items.channels || {};
 		//mark as blocked/unblocked
 		if(items.channels[chnInfo.chName]) delete items.channels[chnInfo.chName];
-		else items.channels[chnInfo.chName] = [ chnInfo.channelId, chnInfo.chURL ];
+		else items.channels[chnInfo.chName] = [ chnInfo.chId, chnInfo.chURL ];
 		//update storage
 		chrome.storage.sync.set(items, function(){
 		    if(chrome.runtime.lastError) ytl.clog("save error: " + JSON.stringify(chrome.runtime.lastError));
@@ -44,77 +44,85 @@ function main(){
 	},
 	
 	getChnInfo: function(){
-	    var channelId, chURL, chName, ret, pgType, elem;
-		pgType = ytl.ytbPageType();
+	    var chId, chIdElem, chURL, chURLElem, chName, chNameElem, ret, pgType, elem;
+	    pgType = ytl.ytbPageType();
 	    if(pgType === Pg_Type.NONE) return null;
-		else if(pgType === Pg_Type.CHANNEL){
-			channelId = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions button");
-			chURL = document.body.querySelector("div#appbar-nav a");
-			chName = document.body.querySelector("div.primary-header-upper-section-block h1.branded-page-header-title span.qualified-channel-title-text a.spf-link.branded-page-header-title-link"); 
-			if(!channelId || !chURL || !chName){
-				ytl.clog("couldn't find page data: ");
-				if(!channelId) ytl.clog("channelId, "); if(!chURL) ytl.clog("chURL, "); if(!chName) ytl.clog("chName");
-				return null;
-			}
-			channelId = channelId.getAttribute("data-channel-external-id") || "";
-			chURL = chURL.getAttribute("href") || "";
-			chURL = chURL.substr(chURL.lastIndexOf("/", chURL.lastIndexOf("/")-1)) || "";
-			chName = chName.innerText || "";
+	    else if(pgType === Pg_Type.CHANNEL){
+		//channel id
+		chIdElem = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions button");
+		if(chIdElem) chId = chIdElem.getAttribute("data-channel-external-id");
+		if(!chId){
+		    chIdElem = document.body.querySelector("#c4-header-bg-container a.spf-link");
+		    if(chIdElem) chId = chIdElem.getAttribute("href");
 		}
-		else if(pgType === Pg_Type.VIDEO){
-			elem = document.body.querySelector("#watch7-user-header .yt-user-info a");
-			if(elem){ channelId = elem.getAttribute("href"); chName = elem.innerText; }
-			elem = document.body.querySelector("#watch7-user-header a");
-			if(elem) chURL = elem.getAttribute("href");
-			if(!channelId || !chURL || !chName){
-				ytl.clog("couldn't find page data: ");
-				if(!channelId) ytl.clog("channelId, "); if(!chURL) ytl.clog("chURL, "); if(!chName) ytl.clog("chName");
-				return null;
-			}
+		if(!chId){
+		    chIdElem = document.body.querySelector("#c4-primary-header-contents div.primary-header-upper-section-block span.qualified-channel-title-text a.spf-link");
+		    if(chIdElem) chId = chIdElem.getAttribute("href");
 		}
-		if(channelId.length > 0 && chURL.length > 0 && chName.length > 0){
-			ret = {};
-			ret.pgType = pgType;
-			ret.channelId = channelId;
-			ret.chName = chName;
-			ret.chURL = chURL;
-			//ytl.printPageData(ret);
-			return ret;
-		}
-		return null;
+		//channel name
+		chNameElem = document.body.querySelector("div.primary-header-upper-section-block h1.branded-page-header-title span.qualified-channel-title-text a.spf-link.branded-page-header-title-link");
+		if(chNameElem) chName = chNameElem.innerText;
+		//channel URL
+		chURLElem = document.body.querySelector("div#appbar-nav a");
+		if(chURLElem) chURL = chURLElem.getAttribute("href");
+	    }
+	    else if(pgType === Pg_Type.VIDEO){
+		//channel id
+		chIdElem = document.body.querySelector("#watch7-user-header .yt-user-info a");
+		if(chIdElem) chId = chIdElem.getAttribute("href");
+		//channel name
+		chNameElem = chIdElem;
+		if(chNameElem) chName = chNameElem.innerText;
+		//channel URL
+		chURLElem = document.body.querySelector("#watch7-user-header a");
+		if(chURLElem) chURL = chURLElem.getAttribute("href");
+	    }
+	    chId = chId || ""; chName = chName || ""; chURL = chURL || "";
+	    if((chId.length > 0 || chURL.length > 0) && chName.length > 0){
+		ret = {};
+		ret.pgType = pgType;
+		ret.chId = chId;
+		ret.chName = chName;
+		ret.chURL = chURL;
+		ytl.printPageData(ret);
+		return ret;
+	    }
+	    else{
+		ytl.clog("some channel info not found: " + chId + "," + chName + "," + chURL);
+	    }
+	    return null;
 	},
 	
 	addButton: function(chnInfo, channels){
 	    var siblingSpan, wrapperSpan, button, buttonSpn;
 	    if(!chnInfo) return;
 	    while(document.getElementById("block-channel")) document.getElementById("block-channel").parentNode.remove();
-		//find sibling element
-		if(chnInfo.pgType === Pg_Type.CHANNEL) siblingSpan = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.subscription-preferences-overlay-container") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.yt-subscription-button-disabled-mask");
-		else if(chnInfo.pgType === Pg_Type.VIDEO) siblingSpan = document.body.querySelector("#watch7-subscription-container .yt-subscription-button-subscriber-count-branded-horizontal.yt-subscriber-count");
-		if(!siblingSpan) return;
-		//create new button element
-		wrapperSpan = document.createElement("span");
-		wrapperSpan.setAttribute("class", "channel-header-subscription-button-container");
-		button = document.createElement("button");
-		button.setAttribute("id", "block-channel");
-		button.setAttribute("class", "yt-uix-button yt-uix-button-size-default no-icon-markup yt-can-buffer yt-uix-button-subscribed-branded");
-		button.style.padding = "0px 8px 0px 8px";
-		button.addEventListener("click", function() { ytl.buttonClick(chnInfo); });
-		buttonSpn = document.createElement("span");
-		if(ytl.isBlocked(chnInfo.chName, channels)) buttonSpn.innerText = "Unblock";
-		else buttonSpn.innerText = "Block";
-		//add new button element using its sibling
-		button.appendChild(buttonSpn);      //add child-span in button
-		wrapperSpan.appendChild(button);    //add button to wrapper-span
-		siblingSpan.parentNode.insertBefore(wrapperSpan, siblingSpan);
+	    //find sibling element
+	    if(chnInfo.pgType === Pg_Type.CHANNEL) siblingSpan = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.subscription-preferences-overlay-container") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.yt-subscription-button-disabled-mask") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span");
+	    else if(chnInfo.pgType === Pg_Type.VIDEO) siblingSpan = document.body.querySelector("#watch7-subscription-container .yt-subscription-button-subscriber-count-branded-horizontal.yt-subscriber-count") || document.body.querySelector("#watch7-subscription-container span.subscription-preferences-overlay-container");
+	    if(!siblingSpan){ ytl.clog("sibling span not found"); return};
+	    //create new button element
+	    wrapperSpan = document.createElement("span");
+	    wrapperSpan.setAttribute("class", "channel-header-subscription-button-container");
+	    button = document.createElement("button");
+	    button.setAttribute("id", "block-channel");
+	    button.setAttribute("class", "yt-uix-button yt-uix-button-size-default no-icon-markup yt-can-buffer yt-uix-button-subscribed-branded");
+	    button.style.padding = "0px 8px 0px 8px";
+	    button.addEventListener("click", function() { ytl.buttonClick(chnInfo); });
+	    buttonSpn = document.createElement("span");
+	    if(ytl.isBlocked(chnInfo.chName, channels)) buttonSpn.innerText = "Unblock";
+	    else buttonSpn.innerText = "Block";
+	    //add new button element using its sibling
+	    button.appendChild(buttonSpn);      //add child-span in button
+	    wrapperSpan.appendChild(button);    //add button to wrapper-span
+	    siblingSpan.parentNode.insertBefore(wrapperSpan, siblingSpan);
 	},
 	
 	buttonClick: function(chnInfo){ ytl.blockChannel(chnInfo); },
-	printPageData: function(ret){ ytl.clog("data: " + ret.chName + ":" + ret.channelId + ":" + ret.chURL); },
+	printPageData: function(ret){ ytl.clog("data: " + ret.chName + ":" + ret.chId + ":" + ret.chURL); },
 	resetData: function(){ ytl.isDebug = true; },
 
 	loadDataAndAddBtn: function(){
-		ytl.clog("loading data");
 	    ret = ytl.getChnInfo();
 	    if(!ret) return;
 	    chrome.storage.sync.get("channels", function(items){
@@ -125,7 +133,6 @@ function main(){
 	initBodyObserver: function(){
 	    if(ytl.bodyObserver) ytl.bodyObserver.disconnect();
 	    ytl.bodyObserver = new MutationObserver(function(mutations) {
-		ytl.clog("in button observer");
 		if(ytl.ytbPageType() > 0){
 		    if(!document.getElementById("block-channel")) ytl.loadDataAndAddBtn();
 		    return;
