@@ -6,7 +6,7 @@ function rebuildTable(){
 }
 
 function populateTable(channels){
-    var chName; var tr; var nodataElem;
+    var chName; var tr; var nodataElem; var chURL;
     var tblElem = document.getElementById("table");
     if(!hasAnyChannels(channels)){
 	nodataElem = document.getElementById("nodata");
@@ -18,10 +18,12 @@ function populateTable(channels){
     tblElem.innerHTML = "<th colspan=2>Blocked Channels</th><th></th>";
     
     for(chName in channels){
+	chURL = channels[chName];
+	if(chURL) chURL = chURL[0] || chURL[1];
 	tr = "<tr>";
-	tr += "<td>" + chName + "</td>";
+	tr += "<td><a href=\"https://www.youtube.com" + chURL + "\" target=\"_blank\">" + chName + "</a></td>";
 	tr += "<td>";
-	tr += "<button id=\""+chName+"\">Unblock</button>";
+	tr += "<button id=\"" + chName + "\">Unblock</button>";
 	tr += "</td>";
 	tr += "</tr>";
 	tblElem.innerHTML += tr;
