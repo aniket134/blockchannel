@@ -51,6 +51,7 @@ function main(){
 		//channel id
 		chIdElem = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions button");
 		if(chIdElem) chId = chIdElem.getAttribute("data-channel-external-id");
+		if(chId) chId = "/channel/" + chId;
 		if(!chId){
 		    chIdElem = document.body.querySelector("#c4-header-bg-container a.spf-link");
 		    if(chIdElem) chId = chIdElem.getAttribute("href");
