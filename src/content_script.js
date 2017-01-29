@@ -10,7 +10,15 @@ function main(){
     /*  Start of ytl object  */
     ytl = {
 	clog: function(msg){ if(ytl.isDebug) console.log("[CS] " + msg); },
-	
+	printPageData: function(ret){ ytl.clog("data: " + ret.chName + ":" + ret.chId + ":" + ret.chURL); },
+	resetData: function(){ ytl.isDebug = true; },
+	buttonClick: function(chnInfo){ ytl.blockChannel(chnInfo); },
+	getButtonText: function(){
+	    var btnElem;
+	    btnElem = document.getElementById("block-channel");
+	    if(btnElem) return btnElem.innerText;
+	    return "";
+	},
 	isBlocked: function(chName, channels){
 	    if(channels && chName && channels[chName]) return true;
 	    return false;
@@ -26,7 +34,7 @@ function main(){
 		//update storage
 		chrome.storage.sync.set(items, function(){
 		    if(chrome.runtime.lastError) ytl.clog("save error: " + JSON.stringify(chrome.runtime.lastError));
-		    else{ ytl.addButton(chnInfo, items.channels); }
+		    else{ ytl.addPageButton(); }
 		});
 	    });
 	},
@@ -94,40 +102,32 @@ function main(){
 	    return null;
 	},
 	
-	addButton: function(chnInfo, channels){
-	    var siblingSpan, wrapperSpan, button, buttonSpn;
+	addPageButton: function(){
+	    var chnInfo, siblingSpan, wrapperSpan, button, buttonSpn, items, channels;
+	    chnInfo = ytl.getChnInfo();
 	    if(!chnInfo) return;
-	    while(document.getElementById("block-channel")) document.getElementById("block-channel").parentNode.remove();
-	    //find sibling element
-	    if(chnInfo.pgType === Pg_Type.CHANNEL) siblingSpan = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.subscription-preferences-overlay-container") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.yt-subscription-button-disabled-mask") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span");
-	    else if(chnInfo.pgType === Pg_Type.VIDEO) siblingSpan = document.body.querySelector("#watch7-subscription-container .yt-subscription-button-subscriber-count-branded-horizontal.yt-subscriber-count") || document.body.querySelector("#watch7-subscription-container span.subscription-preferences-overlay-container");
-	    if(!siblingSpan){ ytl.clog("sibling span not found"); return};
-	    //create new button element
-	    wrapperSpan = document.createElement("span");
-	    wrapperSpan.setAttribute("class", "channel-header-subscription-button-container");
-	    button = document.createElement("button");
-	    button.setAttribute("id", "block-channel");
-	    button.setAttribute("class", "yt-uix-button yt-uix-button-size-default no-icon-markup yt-can-buffer yt-uix-button-subscribed-branded");
-	    button.style.padding = "0px 8px 0px 8px";
-	    button.addEventListener("click", function() { ytl.buttonClick(chnInfo); });
-	    buttonSpn = document.createElement("span");
-	    if(ytl.isBlocked(chnInfo.chName, channels)) buttonSpn.innerText = "Unblock";
-	    else buttonSpn.innerText = "Block";
-	    //add new button element using its sibling
-	    button.appendChild(buttonSpn);      //add child-span in button
-	    wrapperSpan.appendChild(button);    //add button to wrapper-span
-	    siblingSpan.parentNode.insertBefore(wrapperSpan, siblingSpan);
-	},
-	
-	buttonClick: function(chnInfo){ ytl.blockChannel(chnInfo); },
-	printPageData: function(ret){ ytl.clog("data: " + ret.chName + ":" + ret.chId + ":" + ret.chURL); },
-	resetData: function(){ ytl.isDebug = true; },
-
-	loadDataAndAddBtn: function(){
-	    ret = ytl.getChnInfo();
-	    if(!ret) return;
 	    chrome.storage.sync.get("channels", function(items){
-		ytl.addButton(ret, items.channels);
+		channels = items.channels;
+		while(document.getElementById("block-channel")) document.getElementById("block-channel").parentNode.remove();
+		//find sibling element
+		if(chnInfo.pgType === Pg_Type.CHANNEL) siblingSpan = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.subscription-preferences-overlay-container") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.yt-subscription-button-disabled-mask") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span");
+		else if(chnInfo.pgType === Pg_Type.VIDEO) siblingSpan = document.body.querySelector("#watch7-subscription-container .yt-subscription-button-subscriber-count-branded-horizontal.yt-subscriber-count") || document.body.querySelector("#watch7-subscription-container span.subscription-preferences-overlay-container");
+		if(!siblingSpan){ ytl.clog("sibling span not found"); return};
+		//create new button element
+		wrapperSpan = document.createElement("span");
+		wrapperSpan.setAttribute("class", "channel-header-subscription-button-container");
+		button = document.createElement("button");
+		button.setAttribute("id", "block-channel");
+		button.setAttribute("class", "yt-uix-button yt-uix-button-size-default no-icon-markup yt-can-buffer yt-uix-button-subscribed-branded");
+		button.style.padding = "0px 8px 0px 8px";
+		button.addEventListener("click", function() { ytl.buttonClick(chnInfo); });
+		buttonSpn = document.createElement("span");
+		if(ytl.isBlocked(chnInfo.chName, channels)) buttonSpn.innerText = "Unblock";
+		else buttonSpn.innerText = "Block";
+		//add new button element using its sibling
+		button.appendChild(buttonSpn);      //add child-span in button
+		wrapperSpan.appendChild(button);    //add button to wrapper-span
+		siblingSpan.parentNode.insertBefore(wrapperSpan, siblingSpan);
 	    });
 	},
 	
@@ -135,7 +135,8 @@ function main(){
 	    if(ytl.bodyObserver) ytl.bodyObserver.disconnect();
 	    ytl.bodyObserver = new MutationObserver(function(mutations) {
 		if(ytl.ytbPageType() > 0){
-		    if(!document.getElementById("block-channel")) ytl.loadDataAndAddBtn();
+		    ytl.clog(ytl.getButtonText());
+		    if(!document.getElementById("block-channel")) ytl.addPageButton();
 		    return;
 		}
 
@@ -210,7 +211,6 @@ function main(){
 	
 	initialize: function(){
 	    ytl.resetData();
-	    ytl.loadDataAndAddBtn();
 	    ytl.initBodyObserver();
 	}
     }
