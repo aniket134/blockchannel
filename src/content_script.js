@@ -203,6 +203,21 @@ function main() {
 						ytl.hideElements(liElems, "div div a span.stat.attribution", items.channels);
 					} else { ytl.clog("Couldn't find sidebar videos."); }
 				}
+
+				//handle channel page
+				else{
+					//hide channels on the right sidebar on a channel page
+					liElems = document.querySelectorAll(".branded-page-related-channels-list .branded-page-related-channels-item");
+					if (liElems) {
+						ytl.hideElements(liElems, "span div h3.yt-lockup-title a", items.channels);
+					} else { ytl.clog("Couldn't find related channels."); }
+
+					//hide channels on the channels tab on a channel page
+					liElems = document.querySelectorAll("#channels-browse-content-grid .channels-content-item");
+					if (liElems) {
+						ytl.hideElements(liElems, "div div h3.yt-lockup-title a", items.channels);
+					} else { ytl.clog("Couldn't find related channels."); }
+				}
 			});
 		},
 
