@@ -100,12 +100,15 @@ function main() {
 		},
 
 		addPageButton: function () {
-			var chnInfo, siblingSpan, wrapperSpan, button, buttonSpn, items, channels;
+			var chnInfo, siblingSpan, wrapperSpan, button, buttonSpn, items, isChnBlocked;
 			chnInfo = ytl.getPageInfo();
 			if (!chnInfo) return;
 			chrome.storage.sync.get("channels", function (items) {
 				items = items || {};
-				channels = items.channels;
+				isChnBlocked = ytl.isBlocked(chnInfo.chName, items.channels);
+				if(document.getElementById("block-channel")){
+					if(isChnBlocked === (document.getElementById("block-channel").innerText === "Unblock")) return;
+				}
 				while (document.getElementById("block-channel")) document.getElementById("block-channel").parentNode.remove();
 				//find sibling element
 				if (chnInfo.pgType === Pg_Type.CHANNEL) siblingSpan = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.subscription-preferences-overlay-container") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.yt-subscription-button-disabled-mask") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span");
@@ -120,7 +123,7 @@ function main() {
 				button.style.padding = "0px 8px 0px 8px";
 				button.addEventListener("click", function () { ytl.buttonClick(chnInfo); });
 				buttonSpn = document.createElement("span");
-				if (ytl.isBlocked(chnInfo.chName, channels)) buttonSpn.innerText = "Unblock";
+				if (isChnBlocked) buttonSpn.innerText = "Unblock";
 				else buttonSpn.innerText = "Block";
 				//add new button element using its sibling
 				button.appendChild(buttonSpn);      //add child-span in button
@@ -146,7 +149,7 @@ function main() {
 			if (ytl.bodyObserver) ytl.bodyObserver.disconnect();
 			ytl.bodyObserver = new MutationObserver(function (mutations) {
 				if (ytl.ytbPageType() > 0) {
-					if (!document.getElementById("block-channel")) ytl.addPageButton();
+					ytl.addPageButton();
 					// ytl.addPopupButton();
 				}
 
