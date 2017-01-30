@@ -21,9 +21,9 @@ function main() {
 		blockChannel: function (chnInfo) {
 			if (!chnInfo) return;
 			chrome.storage.sync.get("channels", function (items) {
-				items = items || {}; items.channels = items.channels || {};
+				items = items || {};
 				//mark as blocked/unblocked
-				if (items.channels[chnInfo.chName]) delete items.channels[chnInfo.chName];
+				if (items.channels && items.channels[chnInfo.chName]) delete items.channels[chnInfo.chName];
 				else items.channels[chnInfo.chName] = [chnInfo.chId, chnInfo.chURL];
 				//update storage
 				chrome.storage.sync.set(items, function () {
@@ -104,6 +104,7 @@ function main() {
 			chnInfo = ytl.getPageInfo();
 			if (!chnInfo) return;
 			chrome.storage.sync.get("channels", function (items) {
+				items = items || {};
 				channels = items.channels;
 				while (document.getElementById("block-channel")) document.getElementById("block-channel").parentNode.remove();
 				//find sibling element
@@ -174,6 +175,7 @@ function main() {
 
 		hideVideos: function () {
 			chrome.storage.sync.get("channels", function (items) {
+				items = items || {};
 				var i, li, liElems, name, cnt;
 				if (!items.channels) { ytl.clog("nothing to hide"); return; }
 
