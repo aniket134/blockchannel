@@ -21,7 +21,7 @@ function main() {
 		blockChannel: function (chnInfo) {
 			if (!chnInfo) return;
 			chrome.storage.sync.get("channels", function (items) {
-				items = items || {};
+				items = items || {}; items.channels = items.channels || {};
 				//mark as blocked/unblocked
 				if (items.channels && items.channels[chnInfo.chName]) delete items.channels[chnInfo.chName];
 				else items.channels[chnInfo.chName] = [chnInfo.chId, chnInfo.chURL];
