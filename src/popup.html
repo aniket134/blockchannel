@@ -13,19 +13,32 @@
       height: 300px;
       align: center;
       overflow-y: auto;
-      font-family: Helvetica, Arial, sans-serif;
+      font-family: SegoeUI, Helvetica, Arial, sans-serif;
+      background-color: #f3efea;
+      min-width: 300px;
+      margin: 0px;
       }
-      h1 {
-      font-family: Helvetica, Arial, sans-serif;
+
+      // header
+      header {
+      height: 40px;
+      font-family: SegoeUI, Helvetica, Arial, sans-serif;
       text-align: center;
-      margin-bottom: 0px;
-      background-color: #ceb4a1;
-      padding: 2px 0px 2px 0px;
+      vertical-align: middle;
+      background-color: #d2c0b3;
       border-radius: 3px;
+      padding-bottom: 8px;
       }
+      div#header:before{
+      content: "";
+      display: inline-block;
+      vertical-align: middle;
+      }
+
+      // table
       table {
       color: #333;
-      font-family: Helvetica, Arial, sans-serif;
+      font-family: SegoeUI, Helvetica, Arial, sans-serif;
       border-collapse: collapse;
       border-spacing: 0;
       width: 100%;
@@ -35,13 +48,12 @@
       border: 1px solid transparent; /* No more visible border */
       }
       th {
+      background: #ded6d6;
       border-radius: 3px 3px 0px 0px;
-      background: #DFDFDF; /* Darken header a bit */
       font-weight: bold;
       padding: 2px;
       }
       td {
-      background: #F6F6F6;
       text-align: center;
       font-size: 15px
       }
@@ -52,6 +64,7 @@
       color: black;
       }
 
+      // button
       button {
       background-color:#74ad5a;
       border:1px solid #3b6e22;
@@ -88,6 +101,7 @@
       top:1px;
       }
 
+      // data
       .nodisp{
       display: none;
       }
@@ -102,6 +116,7 @@
       font-size:13px;
       }
 
+      // tooltip
       #tooltiptext {
       display: none;
       background-color: #3e3a3a;
@@ -121,8 +136,11 @@
     </style>
   </head>
 
-  <body>
+  <header>
     <div id="header"><h1>Block Youtube Channels</h1></div>
+  </header>
+
+  <body>
     <div id="nodata">No channels have been blocked yet.</div>
     <div class="data channels">
       <table id="table"></table>
