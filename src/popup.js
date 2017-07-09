@@ -26,7 +26,7 @@ function populateKeywordsTable(items){
     tblElem.innerHTML = "";
 
     //keywords present
-    tblElem.innerHTML = "<th colspan=2>Blocked Keywords</th><th></th>";
+    tblElem.innerHTML = "<th colspan=2>Blocked Keywords</th>";
     tr = "<tr>";
     tr += "<td><input type=\"text\" id=\"keywordInput\"/></td>";
     tr += "<td style=\"width: 100px;\">";
@@ -62,14 +62,14 @@ function populateTable(channels){
     if(!tblElem) return;
     tblElem.innerHTML = "";
     if(nodataElem){
-	nodataElem.innerHTML = "";
+	nodataElem.className = "nodisp";
 	if(!hasAnyElements(channels)){
-	    nodataElem.innerHTML = "No channels have been blocked yet.";
+	    nodataElem.className = "";
 	    return;
 	}
     }
 
-    tblElem.innerHTML = "<th colspan=2>Blocked Channels</th><th></th>";
+    tblElem.innerHTML = "<th colspan=2>Blocked Channels</th>";
     for(chName in channels){
 	chURL = channels[chName];
 	if(chURL) chURL = chURL[0] || chURL[1];

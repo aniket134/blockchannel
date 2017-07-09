@@ -6,14 +6,19 @@
       overflow-y: scroll;
       }
       body {
-      width: 440px;
-      height: 300px;
+      width: 400px;
+      height 300px;
       align: center;
       overflow-y: auto;
+      font-family: Helvetica, Arial, sans-serif;
       }
       h1 {
       font-family: Helvetica, Arial, sans-serif;
       text-align: center;
+      margin-bottom: 0px;
+      background-color: #ceb4a1;
+      padding: 2px 0px 2px 0px;
+      border-radius: 4px;
       }
       table {
       color: #333;
@@ -25,14 +30,17 @@
       }
       td, th {
       border: 1px solid transparent; /* No more visible border */
+      border-radius: 4px;
       }
       th {
       background: #DFDFDF; /* Darken header a bit */
       font-weight: bold;
+      padding: 2px;
       }
       td {
-      background: #FAFAFA;
+      background: #F6F6F6;
       text-align: center;
+      font-size: 15px
       }
       td.a{
       color: black;
@@ -40,8 +48,6 @@
       td a:visited, td a:link{
       color: black;
       }
-      tr:nth-child(even) td { background: #F1F1F1; }
-      tr:nth-child(odd) td { background: #FEFEFE; }
 
       button {
       background-color:#74ad5a;
@@ -52,18 +58,11 @@
       font-family:Arial;
       font-size:13px;
       font-weight:bold;
-      padding:6px 12px;
+      padding:3px 12px;
       text-decoration:none;
       width: 80px;
       }
       button:hover {
-      background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #68a54b), color-stop(1, #74ad5a));
-      background:-moz-linear-gradient(top, #68a54b 5%, #74ad5a 100%);
-      background:-webkit-linear-gradient(top, #68a54b 5%, #74ad5a 100%);
-      background:-o-linear-gradient(top, #68a54b 5%, #74ad5a 100%);
-      background:-ms-linear-gradient(top, #68a54b 5%, #74ad5a 100%);
-      background:linear-gradient(to bottom, #68a54b 5%, #74ad5a 100%);
-      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#68a54b', endColorstr='#74ad5a',GradientType=0);
       background-color:#68a54b;
       }
       button.block {
@@ -75,17 +74,10 @@
       font-family:Arial;
       font-size:13px;
       font-weight:bold;
-      padding:6px 12px;
+      padding:3px 12px;
       text-decoration:none;
       }
       button.block:hover {
-      background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #a54b4b), color-stop(1, #ad5a5a));
-      background:-moz-linear-gradient(top, #a54b4b 5%, #ad5a5a 100%);
-      background:-webkit-linear-gradient(top, #a54b4b 5%, #ad5a5a 100%);
-      background:-o-linear-gradient(top, #a54b4b 5%, #ad5a5a 100%);
-      background:-ms-linear-gradient(top, #a54b4b 5%, #ad5a5a 100%);
-      background:linear-gradient(to bottom, #a54b4b 5%, #ad5a5a 100%);
-      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#a54b4b', endColorstr='#ad5a5a',GradientType=0);
       background-color:#a54b4ba54b4b;
       }
       button:active {
@@ -93,8 +85,20 @@
       top:1px;
       }
 
-      div.data.keyword{
-      padding-top: 20px;
+      .nodisp{
+      display: none;
+      }
+
+      div.data{
+      padding-top: 10px;
+      }
+      div.data.channels{
+      padding-bottom: 4px;
+      }
+
+      div#nodata{
+      padding-top: 10px;
+      font-size:13px;
       }
       
     </style>
@@ -102,7 +106,7 @@
   
   <body>
     <div id="header"><h1>Block Youtube Channels</h1></div>
-    <div id="nodata"></div>
+    <div id="nodata">No channels have been blocked yet.</div>
     <div class="data channels">
       <table id="table"></table>
     </div>
