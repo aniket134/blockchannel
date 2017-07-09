@@ -19,8 +19,8 @@ function rebuildKeywordTable(){
 }
 
 function populateKeywordsTable(items){
-    var tr; var tblElem; var buttonElem; var hasAnyElems;
-    var keyword; var keywords; var keywordIndex;
+    var tr; var tblElem; var buttonElem; var inputElem;
+    var hasAnyElems; var keyword; var keywords; var keywordIndex;
     keywords = items.keywords;
     keywordIndex = items.keywordIndex;
     hasAnyElems = hasAnyElements(keywords);
@@ -57,6 +57,11 @@ function populateKeywordsTable(items){
 
     buttonElem = document.querySelector("button#keywordButton");
     if(buttonElem) buttonElem.addEventListener("click", blockKeywordEvent);
+
+    inputElem = document.querySelector("input#keywordInput");
+    if(inputElem) inputElem.addEventListener("keypress", function (e) {
+	if(13 == e.keyCode) blockKeywordEvent();
+    });
 }
 
 function populateTable(channels){
