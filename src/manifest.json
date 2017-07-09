@@ -3,7 +3,7 @@
 
     "name": "Block Youtube Channels",
     "description": "Blocks Youtube channels and hides their videos.",
-    "version": "2.00",
+    "version": "2",
 
     "browser_action": {
 	"default_icon": {
