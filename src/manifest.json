@@ -6,7 +6,10 @@
     "version": "1.43",
 
     "browser_action": {
-	"default_icon": "icon32.png",
+	"default_icon": {
+	    "32": "icon32.png"
+	},
+	"default_title": "Block Youtube Channels",
 	"default_popup": "popup.html"
     },
     "permissions": [
@@ -28,7 +31,7 @@
 		"*://*.youtube.com/*",
 		"*://youtube.com/*"
 	    ],
-	    "js"        : ["jquery.js", "trie.js", "utils.js", "content_script.js"],
+	    "js"        : ["jquery.js", "utils.js", "trie.js", "db.js", "content_script.js"],
 	    "run_at"    : "document_end"
 	}
     ]

@@ -1,6 +1,6 @@
 //public functions
 function trie_addWord(word, trie){
-    if(isEmptyStr(word)) return;
+    if(isEmptyStr(word)) return;  //utils.js
     if(!trie["nc"]) trie["nc"] = 0;
     for(var i = 0; i < word.length; i++){
 	addWordPrivate(word.substr(i), trie);
@@ -15,7 +15,7 @@ function trie_removeWord(word, trie){
 //private functions
 function addWordPrivate(word, trie){
     var c, curNode;
-    if(isEmptyStr(word)) return;
+    if(isEmptyStr(word)) return;  //utils.js
     curNode = trie;
     for(var i = 0; i < word.length; i++){
 	c = word[i];
@@ -31,7 +31,7 @@ function addWordPrivate(word, trie){
 function removeWordPrivate(word, trie){
     var c, cnt;
     cnt = 0;
-    if(isEmptyStr(word)) return cnt; 
+    if(isEmptyStr(word)) return cnt;  //utils.js
     for(var i = 0; i < word.length; i++){
 	c = word[i];
 	if(!trie[c]) continue;
@@ -45,10 +45,3 @@ function removeWordPrivate(word, trie){
     trie["nc"] = trie["nc"] - cnt;
     return cnt;
 }
-
-function isEmptyStr(str){
-    str = str || "";
-    if(str.length > 0) return false;
-    return true;
-}
-

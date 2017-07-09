@@ -1,26 +1,29 @@
-// can be used if needed
-/*
-chrome.webNavigation.onDOMContentLoaded.addListener(function(details) {
-    console.log("[EV] details: " + details.tabId);
-    if(!isYoutube(details.url)) return;
-    executeContentScript(details.tabId, "onDOMContentLoaded");
-});
-
-chrome.webNavigation.onCompleted.addListener(function(details) {
-    console.log("[EV] details: " + details.tabId);
-    if(!isYoutube(details.url)) return;
-    executeContentScript(details.tabId, "onCompleted");
-});
-*/
-
+// Desc: Recieves message from content_script.
+//       https://developer.chrome.com/extensions/runtime#event-onMessage
+// Params:
+//  request: request object, must contain the following:
+//             "event": string identifying an event
+//             "data": any data associated with that event
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+    var badgeText;
     console.log("[EV] msg recieved: " + JSON.stringify(request));
-    if(request.test) return;
     
-    if(request.block){__blockChannel(request.chPath, request.chName); }
-    else if(request.channelList){ __sendChannels(); }
-    else{ console.log("[EV] nonsense msg"); }
+    switch(request.event){
+    case "setBadge":
+	badgeText = request.data;
+	setBadge(badgeText);
+	break;
+    default:
+	console.log("[EV] nonsense msg");
+	break;
+    }
 });
+
+function setBadge(text){
+    if(!text) return;
+    chrome.browserAction.setBadgeBackgroundColor({ "color": "#3e3a3a" });
+    chrome.browserAction.setBadgeText({ "text": text.toString() });
+}
 
 /******************************************************/
 /******************    PRIVATE    *********************/
@@ -97,3 +100,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     });
 });
 
+// can be used if needed
+/*
+chrome.webNavigation.onDOMContentLoaded.addListener(function(details) {
+    console.log("[EV] details: " + details.tabId);
+    if(!isYoutube(details.url)) return;
+    executeContentScript(details.tabId, "onDOMContentLoaded");
+});
+
+chrome.webNavigation.onCompleted.addListener(function(details) {
+    console.log("[EV] details: " + details.tabId);
+    if(!isYoutube(details.url)) return;
+    executeContentScript(details.tabId, "onCompleted");
+});
+*/

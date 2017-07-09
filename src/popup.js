@@ -23,7 +23,7 @@ function populateKeywordsTable(items){
     var hasAnyElems; var keyword; var keywords; var keywordIndex;
     keywords = items.keywords;
     keywordIndex = items.keywordIndex;
-    hasAnyElems = hasAnyElements(keywords);
+    hasAnyElems = hasAnyElements(keywords);  //utils.js
     tblElem = document.getElementById("keywordTable");
 
     //check required variables and set initial state
@@ -43,7 +43,7 @@ function populateKeywordsTable(items){
 	tr = "<tr>";
 	tr += "<td>" + keyword + "</td>";
 	tr += "<td>";
-	tr += "<button id=\"" + keywords[keyword] + "\">Unblock</button>";
+	tr += "<button id=\"" + keywords[keyword][0] + "\">Unblock</button>";
 	tr += "</td>";
 	tr += "</tr>";
 	tblElem.innerHTML += tr;
@@ -51,7 +51,7 @@ function populateKeywordsTable(items){
 
     //add event listeners    
     for(keyword in keywords){
-	document.getElementById(keywords[keyword]).addEventListener(
+	document.getElementById(keywords[keyword][0]).addEventListener(
 	    "click", unblockKeywordEvent);
     }
 
@@ -77,7 +77,7 @@ function populateTable(channels){
     tblElem.innerHTML = "";
     if(nodataElem){
 	nodataElem.className = "nodisp";
-	if(!hasAnyElements(channels)){
+	if(!hasAnyElements(channels)){  //utils.js
 	    nodataElem.className = "";
 	    return;
 	}
@@ -104,7 +104,7 @@ function populateTable(channels){
 
 function blockEvent(){
     //console.log("blocking event: " + this.id);
-    blockChannelCore({ "chName": this.id }, rebuildTable);  //core function present in utils.js
+    blockChannelCore({ "chName": this.id }, rebuildTable);  //db.js
 }
 
 function validateKeyword(){
@@ -113,7 +113,7 @@ function validateKeyword(){
     if(!inputElem) return;
     keyword = inputElem.value || inputElem.innerText || "";
 
-    if(keyword.length > 0 && hasInvalidChars(keyword)){
+    if(keyword.length > 0 && hasInvalidChars(keyword)){  //utils.js
 	inputElem.style.backgroundColor = "#e6bdbd";
 	return false;
     }
@@ -135,7 +135,7 @@ function unblockKeywordEvent(){
     chrome.storage.sync.get("keywordIndex", function(items){
 	items = items || {}; items.keywordIndex = items.keywordIndex || {};
 	keyword = items.keywordIndex[keywordId];
-	blockKeywordCore(keyword, false, rebuildKeywordTable);  //core function present in utils.js
+	blockKeywordCore(keyword, false, rebuildKeywordTable);  //db.js
     });
 }
 
@@ -145,7 +145,7 @@ function blockKeywordEvent(){
     if(!inputElem) return;
     keyword = inputElem.value || inputElem.innerText || "";
     if(keyword.length == 0) return;
-    blockKeywordCore(keyword, true, rebuildKeywordTable);  //core function present in utils.js
+    blockKeywordCore(keyword, true, rebuildKeywordTable);  //db.js
 }
 
 document.addEventListener("DOMContentLoaded", function(){
