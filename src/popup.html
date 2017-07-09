@@ -101,19 +101,39 @@
       padding-top: 10px;
       font-size:13px;
       }
-      
+
+      #tooltiptext {
+      display: none;
+      background-color: #3e3a3a;
+      color: white;
+      border: solid thin gray;
+      border-radius: 6px;
+      padding: 6px 6px 8px 10px;
+      font-size: small;
+      position: absolute;
+      z-index: 1;
+      }
+
+      #keywordImg{
+      padding: 0px 2px 2px 2px;
+      vertical-align: middle;
+      }
     </style>
   </head>
-  
+
   <body>
     <div id="header"><h1>Block Youtube Channels</h1></div>
     <div id="nodata">No channels have been blocked yet.</div>
     <div class="data channels">
       <table id="table"></table>
     </div>
-    
+
     <div class="data keyword">
       <table id="keywordTable"></table>
     </div>
+
+
+    <div id="tooltiptext">Video whose title contains this string will be hidden. The string matching is case-insensitive.</div>
+
   </body>
 </html>

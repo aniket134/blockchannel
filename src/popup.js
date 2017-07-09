@@ -19,7 +19,7 @@ function rebuildKeywordTable(){
 }
 
 function populateKeywordsTable(items){
-    var tr; var tblElem; var buttonElem; var inputElem;
+    var tr; var tblElem; var buttonElem; var inputElem; var keywordImg;
     var hasAnyElems; var keyword; var keywords; var keywordIndex;
     keywords = items.keywords;
     keywordIndex = items.keywordIndex;
@@ -31,7 +31,7 @@ function populateKeywordsTable(items){
     tblElem.innerHTML = "";
 
     //keywords present
-    tblElem.innerHTML = "<th colspan=2>Blocked Keywords</th>";
+    tblElem.innerHTML = "<th colspan=2>Blocked Keywords <image src=\"info128.png\" height=\"11px\" id=\"keywordImg\"/></th>";
     tr = "<tr>";
     tr += "<td><input type=\"text\" id=\"keywordInput\"  /></td>";
     tr += "<td style=\"width: 100px;\">";
@@ -49,7 +49,7 @@ function populateKeywordsTable(items){
 	tblElem.innerHTML += tr;
     }
 
-    //add event listeners    
+    //add event listeners
     for(keyword in keywords){
 	document.getElementById(keywords[keyword][0]).addEventListener(
 	    "click", unblockKeywordEvent);
@@ -61,10 +61,32 @@ function populateKeywordsTable(items){
     inputElem = document.querySelector("input#keywordInput");
     if(inputElem){
 	inputElem.focus();
-	inputElem.addEventListener("keypress", function (e) {
+	inputElem.addEventListener("keypress", function (e){
 	    keywordKeyoressEvent(e);
 	});
 	inputElem.addEventListener("input", validateKeyword);
+    }
+
+    keywordImg = document.querySelector("img#keywordImg");
+    if(keywordImg){
+	keywordImg.addEventListener("mouseover", function(e){
+	    var boundBox = e.target.getBoundingClientRect();
+	    var coordX = boundBox.left;
+	    var coordY = boundBox.top;
+	    var tooltip = document.querySelector("div#tooltiptext");
+	    if(tooltip){
+		tooltip.style.display = "inline-block";
+		tooltip.style.top = (coordY + 10).toString() + "px";
+		tooltip.style.left = (coordX - 190).toString() + "px";
+		tooltip.style.width = "200px"
+	    }
+	});
+	keywordImg.addEventListener("mouseout", function(){
+	    var tooltip = document.querySelector("div#tooltiptext");
+	    if(tooltip){
+		tooltip.style.display = "none";
+	    }
+	});
     }
 }
 
@@ -72,7 +94,7 @@ function populateTable(channels){
     var chName; var tr; var nodataElem; var chURL; var tblElem;
     tblElem = document.getElementById("table");
     nodataElem = document.getElementById("nodata");
-    
+
     if(!tblElem) return;
     tblElem.innerHTML = "";
     if(nodataElem){
