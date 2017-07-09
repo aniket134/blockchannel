@@ -1,5 +1,3 @@
-
-
 function blockChannelCore(chnInfo, successCallback){
     var chName, channelId, chURL;
     if (!chnInfo) return;
@@ -28,22 +26,28 @@ function blockChannelCore(chnInfo, successCallback){
 function blockKeywordCore(keyword, blocking, successCallback){
     //console.log("blockKeywordCore: " + keyword + ", " + blocking);
     var keywordId;
-    chrome.storage.sync.get(["keywords", "keywordIndex"], function(items){
+    chrome.storage.sync.get(["keywords", "keywordIndex", "keywordTrie"], function(items){
 	//console.log("blockKeywordCore, old: " + JSON.stringify(items));
 	items = items || {}; items.keywords = items.keywords || {};
-	items.keywordIndex = items.keywordIndex || {};
+	items.keywordIndex = items.keywordIndex || {}; items.keywordTrie = items.keywordTrie || {};
 
 	//mark as blocked/unblocked
 	if(!blocking && items.keywords[keyword]){
 	    keywordId = items.keywords[keyword];
-	    if(items.keywords[keyword]) delete items.keywords[keyword];
-	    if(items.keywordIndex[keywordId]) delete items.keywordIndex[keywordId];
+	    if(items.keywords[keyword]){
+		delete items.keywords[keyword];
+		delete items.keywordIndex[keywordId];
+		trie_removeWord(keyword, items.keywordTrie);
+	    }
 	}
 	if(blocking && !items.keywords[keyword]){
 	    keywordId = keyword + "-ID";
 	    items.keywords[keyword] = keywordId;
 	    items.keywordIndex[keywordId] = keyword;
+	    trie_addWord(keyword, items.keywordTrie);
 	}
+
+	//console.log(items.keywordTrie);
 	
 	//update storage
 	chrome.storage.sync.set(items, function(){
@@ -60,4 +64,11 @@ function hasAnyElements(elements){
     if(!elements) return false;
     for(elem in elements) { return true; }
     return false;
+}
+
+function hasInvalidChars(str){
+    if(!str) return true;
+    if(str.length <= 0) return true;
+    if(str.match(/^[\w- |+=@#;:,.?]+$/)) return false;
+    return true;
 }

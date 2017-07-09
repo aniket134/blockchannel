@@ -28,7 +28,7 @@
 		"*://*.youtube.com/*",
 		"*://youtube.com/*"
 	    ],
-	    "js"        : ["jquery.js", "utils.js", "content_script.js"],
+	    "js"        : ["jquery.js", "trie.js", "utils.js", "content_script.js"],
 	    "run_at"    : "document_end"
 	}
     ]

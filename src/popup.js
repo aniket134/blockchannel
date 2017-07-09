@@ -33,7 +33,7 @@ function populateKeywordsTable(items){
     //keywords present
     tblElem.innerHTML = "<th colspan=2>Blocked Keywords</th>";
     tr = "<tr>";
-    tr += "<td><input type=\"text\" id=\"keywordInput\"/></td>";
+    tr += "<td><input type=\"text\" id=\"keywordInput\"  /></td>";
     tr += "<td style=\"width: 100px;\">";
     tr += "<button id=\"keywordButton\" class=\"block\">Block</button>";
     tr += "</td>";
@@ -59,9 +59,13 @@ function populateKeywordsTable(items){
     if(buttonElem) buttonElem.addEventListener("click", blockKeywordEvent);
 
     inputElem = document.querySelector("input#keywordInput");
-    if(inputElem) inputElem.addEventListener("keypress", function (e) {
-	if(13 == e.keyCode) blockKeywordEvent();
-    });
+    if(inputElem){
+	inputElem.focus();
+	inputElem.addEventListener("keypress", function (e) {
+	    keywordKeyoressEvent(e);
+	});
+	inputElem.addEventListener("input", validateKeyword);
+    }
 }
 
 function populateTable(channels){
@@ -103,13 +107,35 @@ function blockEvent(){
     blockChannelCore({ "chName": this.id }, rebuildTable);  //core function present in utils.js
 }
 
+function validateKeyword(){
+    var key, keyword, inputElem;
+    inputElem = document.querySelector("div input#keywordInput");
+    if(!inputElem) return;
+    keyword = inputElem.value || inputElem.innerText || "";
+
+    if(keyword.length > 0 && hasInvalidChars(keyword)){
+	inputElem.style.backgroundColor = "#e6bdbd";
+	return false;
+    }
+    else{
+	inputElem.style.backgroundColor = "white";
+	if(keyword.length > 0) return true;
+	else return false;
+    }
+}
+
+function keywordKeyoressEvent(event){
+    if(!validateKeyword()) return;
+    if(13 == event.keyCode) blockKeywordEvent();
+}
+
 function unblockKeywordEvent(){
     var keyword, keywordId;
     keywordId = this.id + "";
     chrome.storage.sync.get("keywordIndex", function(items){
 	items = items || {}; items.keywordIndex = items.keywordIndex || {};
 	keyword = items.keywordIndex[keywordId];
-	blockKeywordCore(keyword, false, refreshPopup);  //core function present in utils.js
+	blockKeywordCore(keyword, false, rebuildKeywordTable);  //core function present in utils.js
     });
 }
 
@@ -119,7 +145,7 @@ function blockKeywordEvent(){
     if(!inputElem) return;
     keyword = inputElem.value || inputElem.innerText || "";
     if(keyword.length == 0) return;
-    blockKeywordCore(keyword, true, refreshPopup);  //core function present in utils.js
+    blockKeywordCore(keyword, true, rebuildKeywordTable);  //core function present in utils.js
 }
 
 document.addEventListener("DOMContentLoaded", function(){
