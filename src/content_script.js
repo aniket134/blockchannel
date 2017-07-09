@@ -173,7 +173,8 @@ function main() {
 	hideVideos: function () {
 	    chrome.storage.sync.get(["keywords", "keywordIndex", "channels"], function (items) {
 		items = items || {};
-		var liElems;
+		var liElems, cnt;
+		cnt = 0;
 		if (!items.channels && !items.keywords) { ytl.cerr("nothing to hide"); return; }
 
 		//don't hide videos on a channel page
@@ -181,7 +182,7 @@ function main() {
 		    //hide individual videos - Home
 		    liElems = document.querySelectorAll(".yt-shelf-grid-item");
 		    if (liElems) {
-			ytl.hideElements(liElems, items,
+			cnt += ytl.hideElements(liElems, items,
 					 "div div.yt-lockup-dismissable div.yt-lockup-content div a",
 					 "div div.yt-lockup-dismissable div.yt-lockup-content h3 a");
 		    } else { ytl.cerr("Couldn't find yt-shelf-grid-item items."); }
@@ -189,7 +190,7 @@ function main() {
 		    //hide individual videos - Trending
 		    liElems = document.querySelectorAll("#content ul li.expanded-shelf-content-item-wrapper");
 		    if (liElems) {
-			ytl.hideElements(liElems, items,
+			cnt += ytl.hideElements(liElems, items,
 					 "div.yt-lockup-content div.yt-lockup-byline a",
 					 "div.yt-lockup-content h3.yt-lockup-title a");
 		    } else { ytl.cerr("Couldn't find expanded-shelf-content-item-wrapper."); }
@@ -197,14 +198,14 @@ function main() {
 		    //hide complete sections
 		    liElems = document.querySelectorAll("#feed .section-list .item-section");
 		    if (liElems) {
-			ytl.hideElements(liElems, items,
+			cnt += ytl.hideElements(liElems, items,
 					 "li div.shelf-title-row span.branded-page-module-title-text");
 		    } else { ytl.cerr("Couldn't find section-list sections."); }
 
 		    //hide sidebar videos
 		    liElems = document.querySelectorAll("#watch7-sidebar-modules .video-list-item");
 		    if (liElems) {
-			ytl.hideElements(liElems, items,
+			cnt += ytl.hideElements(liElems, items,
 					 "div.content-wrapper a span.stat.attribution",
 					 "div.content-wrapper a span.title");
 		    } else { ytl.cerr("Couldn't find sidebar videos."); }
@@ -215,16 +216,22 @@ function main() {
 		    //hide channels on the right sidebar on a channel page
 		    liElems = document.querySelectorAll(".branded-page-related-channels-list .branded-page-related-channels-item");
 		    if (liElems) {
-			ytl.hideElements(liElems, items,
+			cnt += ytl.hideElements(liElems, items,
 					 "span div h3.yt-lockup-title a");
 		    } else { ytl.cerr("Couldn't find related channels."); }
 
 		    //hide channels on the channels tab on a channel page
 		    liElems = document.querySelectorAll("#channels-browse-content-grid .channels-content-item");
 		    if (liElems) {
-			ytl.hideElements(liElems, items,
-					 "div div h3.yt-lockup-title a");
+			cnt += ytl.hideElements(liElems, items,
+						"div div h3.yt-lockup-title a");
 		    } else { ytl.cerr("Couldn't find related channels."); }
+		}
+
+		//update extension icon
+		if(cnt > 0){
+		    ytl.clog("Hidden " + cnt + " elements.");
+		    ytl.sendMessage("setBadge", cnt);
 		}
 	    });
 	},
@@ -270,10 +277,7 @@ function main() {
 		    }
 		}
 	    }
-	    if(cnt > 0){
-		ytl.clog("Hidden " + cnt + " elements.");
-		ytl.sendMessage("setBadge", cnt);
-	    }
+	    return cnt;
 	},
 
 	initialize: function () {
