@@ -164,35 +164,38 @@ function main() {
 	},
 
 	hideVideos: function () {
-	    chrome.storage.sync.get("channels", function (items) {
+	    chrome.storage.sync.get(["keywords", "keywordIndex", "channels"], function (items) {
 		items = items || {};
 		var i, li, liElems, name, cnt;
-		if (!items.channels) { ytl.clog("nothing to hide"); return; }
+		if (!items.channels && !items.keywords) { ytl.clog("nothing to hide"); return; }
 
 		//don't hide videos on a channel page
 		if (ytl.ytbPageType() != Pg_Type.CHANNEL) {
 		    //hide individual videos - I
 		    liElems = document.querySelectorAll(".yt-shelf-grid-item"); cnt = 0;
 		    if (liElems) {
-			ytl.hideElements(liElems, "div div.yt-lockup-dismissable div.yt-lockup-content div a", items.channels);
+			ytl.hideElements(liElems, items, "div div.yt-lockup-dismissable div.yt-lockup-content div a",
+					"div div.yt-lockup-dismissable div.yt-lockup-content h3 a");
 		    } else { ytl.clog("Couldn't find yt-shelf-grid-item items."); }
 
 		    //hide individual videos - II
-		    liElems = document.querySelectorAll("#content .expanded-shelf-content-item-wrapper"); cnt = 0;
+		    liElems = document.querySelectorAll("#content ul li.expanded-shelf-content-item-wrapper"); cnt = 0;
 		    if (liElems) {
-			ytl.hideElements(liElems, "li div div div div div div div.yt-lockup-content div.yt-lockup-byline a", items.channels);
+			ytl.hideElements(liElems, items, "div.yt-lockup-content div.yt-lockup-byline a",
+					 "div.yt-lockup-content h3.yt-lockup-title a");
 		    } else { ytl.clog("Couldn't find expanded-shelf-content-item-wrapper."); }
 
 		    //hide complete sections
 		    liElems = document.querySelectorAll("#feed .section-list .item-section"); cnt = 0;
 		    if (liElems) {
-			ytl.hideElements(liElems, "li div div div div h2 a", items.channels);
+			ytl.hideElements(liElems, items, "li div div div div h2 a");
 		    } else { ytl.clog("Couldn't find section-list sections."); }
 
 		    //hide sidebar videos
 		    liElems = document.querySelectorAll("#watch7-sidebar-modules .video-list-item");
 		    if (liElems) {
-			ytl.hideElements(liElems, "div div a span.stat.attribution", items.channels);
+			ytl.hideElements(liElems, items, "div.content-wrapper a span.stat.attribution",
+					"div.content-wrapper a span.title");
 		    } else { ytl.clog("Couldn't find sidebar videos."); }
 		}
 
@@ -201,28 +204,47 @@ function main() {
 		    //hide channels on the right sidebar on a channel page
 		    liElems = document.querySelectorAll(".branded-page-related-channels-list .branded-page-related-channels-item");
 		    if (liElems) {
-			ytl.hideElements(liElems, "span div h3.yt-lockup-title a", items.channels);
+			ytl.hideElements(liElems, items, "span div h3.yt-lockup-title a");
 		    } else { ytl.clog("Couldn't find related channels."); }
 
 		    //hide channels on the channels tab on a channel page
 		    liElems = document.querySelectorAll("#channels-browse-content-grid .channels-content-item");
 		    if (liElems) {
-			ytl.hideElements(liElems, "div div h3.yt-lockup-title a", items.channels);
+			ytl.hideElements(liElems, items, "div div h3.yt-lockup-title a");
 		    } else { ytl.clog("Couldn't find related channels."); }
 		}
 	    });
 	},
 
-	hideElements: function (elems, qSelector, channels) {
-	    var name, i, elem, cnt;
+	hideElements: function (elems, items, chnSelector, keywordSelector) {
+	    var name, i, elem, cnt, channels, keywords, keywordIndex;
+	    channels = items.channels;
+	    keywords = items.keywords;
+	    keywordIndex = items.keywordIndex;
+	    
 	    cnt = 0;
 	    for (i = 0; i < elems.length; i++) {
 		elem = elems[i];
 		if (elem.style.display === "none") continue;
-		name = elem.querySelector(qSelector);
+		name = elem.querySelector(chnSelector);
 		if (name) name = name.innerText.trim();
-		if (!name || !channels[name]) continue;
-		elem.style.display = "none"; cnt++;
+		name = name || "";
+		if (name.length > 0 && channels[name]){
+		    ytl.clog("Hiding channel " + name);
+		    elem.style.display = "none"; cnt++;
+		    continue;
+		}
+
+		if(keywordSelector){
+		    name = elem.querySelector(keywordSelector);
+		    if (name) name = name.innerText;
+		    name = name || "";
+		    if(name.length > 0 && keywords[name]){
+			ytl.clog("Hiding keywork " + name);
+			elem.style.display = "none"; cnt++;
+			continue;
+		    }
+		}
 	    }
 	    ytl.clog("Hidden " + cnt + " elements.");
 	},
