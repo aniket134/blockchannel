@@ -7,7 +7,7 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     var badgeText;
     console.log("[EV] msg recieved: " + JSON.stringify(request));
-    
+
     switch(request.event){
     case "setBadge":
 	badgeText = request.data;
@@ -62,7 +62,7 @@ function __sendChannels(){
 }
 
 // chPath: string: channel path
-// chName: string: channel name 
+// chName: string: channel name
 function __blockChannel(chPath, chName){
     chrome.storage.sync.get("channels", function(items){
 	console.log("[EV] __blockChannel, old: " + JSON.stringify(items));
@@ -71,7 +71,7 @@ function __blockChannel(chPath, chName){
 	//mark as blocked/unblocked
 	if(items.channels[chName]) delete items.channels[chName];
 	else items.channels[chName] = chPath;
-	
+
 	//update storage
 	chrome.storage.sync.set(items, function(){
 	    if(chrome.runtime.lastError) console.log("[EV] error: " + JSON.stringify(chrome.runtime.lastError));
@@ -87,7 +87,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 
     //recieve test message
     console.log("[EV] test msg recieved: " + request.text);
-    
+
     // send a test RESPONSE
     sendResponse("test response from events.js");
 

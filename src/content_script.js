@@ -9,9 +9,10 @@ function main() {
     /*************************/
     /*  Start of ytl object  */
     ytl = {
+	cerr: function (err) { console.log("[CS ERR] " + err); },
 	clog: function (msg) { if (ytl.isDebug) console.log("[CS] " + msg); },
 	printPageData: function (ret) { ytl.clog(ret.chName + ": " + ret.chId + ": " + ret.chURL); },
-	resetData: function () { ytl.isDebug = true; },
+	resetData: function () { ytl.isDebug = false; },
 	isBlocked: function (chName, channels) {
 	    if (channels && chName && channels[chName]) return true;
 	    return false;
@@ -25,7 +26,7 @@ function main() {
 
 	//calls core function in db.js
 	buttonClick: function (chnInfo) { blockChannelCore(chnInfo, ytl.addPageButton); },
-	
+
 	ytbPageType: function () {
 	    var index, url;
 	    url = document.location.toString();
@@ -87,7 +88,7 @@ function main() {
 		return ret;
 	    }
 	    else {
-		ytl.clog("some channel info not found: " + chId + "," + chName + "," + chURL);
+		ytl.cerr("some channel info not found: " + chId + "," + chName + "," + chURL);
 	    }
 	    return null;
 	},
@@ -106,7 +107,7 @@ function main() {
 		//find sibling element
 		if (chnInfo.pgType === Pg_Type.CHANNEL) siblingSpan = document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.subscription-preferences-overlay-container") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span span.yt-subscription-button-disabled-mask") || document.body.querySelector("div.primary-header-upper-section-block div.primary-header-actions span");
 		else if (chnInfo.pgType === Pg_Type.VIDEO) siblingSpan = document.body.querySelector("#watch7-subscription-container .yt-subscription-button-subscriber-count-branded-horizontal.yt-subscriber-count") || document.body.querySelector("#watch7-subscription-container span.subscription-preferences-overlay-container");
-		if (!siblingSpan) { ytl.clog("sibling span not found"); return };
+		if (!siblingSpan) { ytl.cerr("sibling span not found"); return };
 		//create new button element
 		wrapperSpan = document.createElement("span");
 		wrapperSpan.setAttribute("class", "channel-header-subscription-button-container");
@@ -173,7 +174,7 @@ function main() {
 	    chrome.storage.sync.get(["keywords", "keywordIndex", "channels"], function (items) {
 		items = items || {};
 		var liElems;
-		if (!items.channels && !items.keywords) { ytl.clog("nothing to hide"); return; }
+		if (!items.channels && !items.keywords) { ytl.cerr("nothing to hide"); return; }
 
 		//don't hide videos on a channel page
 		if (ytl.ytbPageType() != Pg_Type.CHANNEL) {
@@ -183,7 +184,7 @@ function main() {
 			ytl.hideElements(liElems, items,
 					 "div div.yt-lockup-dismissable div.yt-lockup-content div a",
 					 "div div.yt-lockup-dismissable div.yt-lockup-content h3 a");
-		    } else { ytl.clog("Couldn't find yt-shelf-grid-item items."); }
+		    } else { ytl.cerr("Couldn't find yt-shelf-grid-item items."); }
 
 		    //hide individual videos - Trending
 		    liElems = document.querySelectorAll("#content ul li.expanded-shelf-content-item-wrapper");
@@ -191,14 +192,14 @@ function main() {
 			ytl.hideElements(liElems, items,
 					 "div.yt-lockup-content div.yt-lockup-byline a",
 					 "div.yt-lockup-content h3.yt-lockup-title a");
-		    } else { ytl.clog("Couldn't find expanded-shelf-content-item-wrapper."); }
+		    } else { ytl.cerr("Couldn't find expanded-shelf-content-item-wrapper."); }
 
 		    //hide complete sections
 		    liElems = document.querySelectorAll("#feed .section-list .item-section");
 		    if (liElems) {
 			ytl.hideElements(liElems, items,
 					 "li div.shelf-title-row span.branded-page-module-title-text");
-		    } else { ytl.clog("Couldn't find section-list sections."); }
+		    } else { ytl.cerr("Couldn't find section-list sections."); }
 
 		    //hide sidebar videos
 		    liElems = document.querySelectorAll("#watch7-sidebar-modules .video-list-item");
@@ -206,7 +207,7 @@ function main() {
 			ytl.hideElements(liElems, items,
 					 "div.content-wrapper a span.stat.attribution",
 					 "div.content-wrapper a span.title");
-		    } else { ytl.clog("Couldn't find sidebar videos."); }
+		    } else { ytl.cerr("Couldn't find sidebar videos."); }
 		}
 
 		//handle channel page
@@ -216,14 +217,14 @@ function main() {
 		    if (liElems) {
 			ytl.hideElements(liElems, items,
 					 "span div h3.yt-lockup-title a");
-		    } else { ytl.clog("Couldn't find related channels."); }
+		    } else { ytl.cerr("Couldn't find related channels."); }
 
 		    //hide channels on the channels tab on a channel page
 		    liElems = document.querySelectorAll("#channels-browse-content-grid .channels-content-item");
 		    if (liElems) {
 			ytl.hideElements(liElems, items,
 					 "div div h3.yt-lockup-title a");
-		    } else { ytl.clog("Couldn't find related channels."); }
+		    } else { ytl.cerr("Couldn't find related channels."); }
 		}
 	    });
 	},
@@ -232,11 +233,14 @@ function main() {
 	    var name, i, elem, cnt, channels, keywords, keyword;
 	    channels = items.channels;
 	    keywords = items.keywords;
-	    
 	    cnt = 0;
+
 	    for (i = 0; i < elems.length; i++) {
 		elem = elems[i];
-		if (elem.style.display === "none") continue;
+		if (elem.style.display === "none"){
+		    cnt++;
+		    continue;
+		}
 
 		//channel match
 		if(channels){
