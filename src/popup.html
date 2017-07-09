@@ -1,5 +1,6 @@
 <html>
   <head>
+    <script src="utils.js"></script>
     <script src="popup.js"></script>
     <style>
       html {
@@ -7,7 +8,7 @@
       }
       body {
       width: 400px;
-      height 300px;
+      height: 300px;
       align: center;
       overflow-y: auto;
       font-family: Helvetica, Arial, sans-serif;
@@ -18,7 +19,7 @@
       margin-bottom: 0px;
       background-color: #ceb4a1;
       padding: 2px 0px 2px 0px;
-      border-radius: 4px;
+      border-radius: 3px;
       }
       table {
       color: #333;
@@ -30,9 +31,9 @@
       }
       td, th {
       border: 1px solid transparent; /* No more visible border */
-      border-radius: 4px;
       }
       th {
+      border-radius: 3px 3px 0px 0px;
       background: #DFDFDF; /* Darken header a bit */
       font-weight: bold;
       padding: 2px;
@@ -91,8 +92,6 @@
 
       div.data{
       padding-top: 10px;
-      }
-      div.data.channels{
       padding-bottom: 4px;
       }
 
